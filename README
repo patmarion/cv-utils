@@ -1,0 +1,8 @@
+This repo contains minimal files to compile the cv-utils
+library which is used by Director for processing RGB and depth
+images from IMAGES_T lcm messages, for example, images from
+the MultiSense camera driver or Kinect/Asus openni lcm driver.
+
+These files are copied from Openhumanoids:
+
+    https://github.com/openhumanoids/oh-distro
