@@ -59,7 +59,7 @@ target_link_libraries(cv-utils
   ${OpenCV_LIBS}
   ${PCL_LIBRARIES})
 
-use_pkg(cv-utils bot2-core)
+use_pkg(cv-utils lcmtypes_bot2-core)
 
 install(FILES
   image_utils/jpeg.h
