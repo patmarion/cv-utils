@@ -15,6 +15,7 @@ include(macros.cmake)
 find_package(JPEG REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(PCL REQUIRED)
+find_package(ZLIB REQUIRED)
 
 setup_pkg_config_path()
 
@@ -55,6 +56,7 @@ set_property(SOURCE
 #  PROPERTY INCLUDE_DIRECTORIES /foo/bar)
 
 target_link_libraries(cv-utils
+  ${ZLIB_LIBRARIES}
   ${JPEG_LIBRARIES}
   ${OpenCV_LIBS}
   ${PCL_LIBRARIES})
