@@ -1,8 +1,6 @@
 #include <iostream>
 #include <zlib.h>
 
-#include <bot_core/bot_core.h>
-
 #include "multisense_utils.hpp"
 #define PCL_VERBOSITY_LEVEL L_ERROR
 

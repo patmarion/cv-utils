@@ -61,7 +61,21 @@ target_link_libraries(cv-utils
   ${OpenCV_LIBS}
   ${PCL_LIBRARIES})
 
-use_pkg(cv-utils lcmtypes_bot2-core)
+find_package(bot2-core-lcmtypes QUIET)
+if(bot2-core-lcmtypes_FOUND)
+  # Find glib-2.0 and gthread-2.0 which are not automatically found by CMake
+  # gthread-2.0 finds glib-2.0
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(gthread-2.0 gthread-2.0 IMPORTED_TARGET)
+  if(NOT gthread-2.0_FOUND)
+    message(FATAL_ERROR "bot2-core-lcmtypes requires gthread-2.0 and it was not found.")
+  endif()
+  target_link_libraries(cv-utils bot2-core-lcmtypes::lcmtypes_bot2-core PkgConfig::gthread-2.0)
+else()
+  use_pkg(cv-utils lcmtypes_bot2-core)
+endif()
+
+
 
 install(FILES
   image_utils/jpeg.h
