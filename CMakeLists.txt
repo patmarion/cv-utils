@@ -63,14 +63,21 @@ target_link_libraries(cv-utils
 
 find_package(bot2-core-lcmtypes QUIET)
 if(bot2-core-lcmtypes_FOUND)
-  # Find glib-2.0 and gthread-2.0 which are not automatically found by CMake
-  # gthread-2.0 finds glib-2.0
+  # Find glib-2.0 and gthread-2.0 which are not automatically found by CMake.
   find_package(PkgConfig REQUIRED)
-  pkg_check_modules(gthread-2.0 gthread-2.0 IMPORTED_TARGET)
-  if(NOT gthread-2.0_FOUND)
+  pkg_check_modules(PC_GLIB2 glib-2.0)
+  find_path(GLIB2_INCLUDE_DIR NAMES glib.h PATHS "${PC_GLIB2_INCLUDE_DIRS}"
+    PATH_SUFFIXES glib-2.0 glib-2.0/include)
+  find_library(GLIB2_LIBRARY NAMES glib-2.0 PATHS "${PC_GLIB2_LIBRARY_DIRS}")
+  pkg_check_modules(PC_GTHREAD2 gthread-2.0)
+  find_library(GTHREAD2_LIBRARY NAMES gthread-2.0
+    PATHS "${PC_GTHREAD2_LIBRARY_DIRS}")
+  if(NOT GLIB2_INCLUDE_DIR OR NOT GLIB2_LIBRARY OR NOT GTHREAD2_LIBRARY)
     message(FATAL_ERROR "bot2-core-lcmtypes requires gthread-2.0 and it was not found.")
   endif()
-  target_link_libraries(cv-utils bot2-core-lcmtypes::lcmtypes_bot2-core PkgConfig::gthread-2.0)
+  include_directories("${GLIB2_INCLUDE_DIR}")
+  target_link_libraries(cv-utils bot2-core-lcmtypes::lcmtypes_bot2-core
+    "${GLIB2_LIBRARY}" "${GTHREAD2_LIBRARY}")
 else()
   use_pkg(cv-utils lcmtypes_bot2-core)
 endif()
