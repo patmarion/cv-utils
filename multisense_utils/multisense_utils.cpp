@@ -131,51 +131,16 @@ void multisense_utils::unpack_multisense(const uint8_t* depth_data, const uint8_
 //  pcl::io::savePCDFileASCII ("test_pcd.pcd", *cloud);
 }
 
-
-void multisense_utils::unpack_multisense(const bot_core_images_t *msg, cv::Mat_<double> repro_matrix, 
-                                       pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud){
-  bool is_rgb=false;
-  if (msg->images[0].pixelformat == BOT_CORE_IMAGE_T_PIXEL_FORMAT_RGB ){
-    rgb_buf_ = msg->images[0].data;
-    is_rgb = true;
-  }else if (msg->images[0].pixelformat == BOT_CORE_IMAGE_T_PIXEL_FORMAT_GRAY ){
-    rgb_buf_ = msg->images[0].data;
-    is_rgb = false;
-  }else if (msg->images[0].pixelformat == BOT_CORE_IMAGE_T_PIXEL_FORMAT_MJPEG ){
-    jpeg_decompress_8u_rgb (msg->images[0].data, msg->images[0].size,
-        rgb_buf_, msg->images[0].width, msg->images[0].height, msg->images[0].width* 3);
-    //jpegijg_decompress_8u_rgb(msg->image.image_data, msg->image.image_data_nbytes,
-    //        rgb_data, msg->image.width, msg->image.height, msg->image.width* 3);
-    is_rgb = true;
-  }else{
-    std::cout << "multisense_utils::unpack_multisense | type not understood\n";
-    exit(-1);
-  }
-  
-  // TODO: support other modes (as in the renderer)
-  if (msg->image_types[1] == BOT_CORE_IMAGES_T_DISPARITY_ZIPPED ) {
-    unsigned long dlen = msg->images[0].width*msg->images[0].height*2 ;//msg->depth.uncompressed_size;
-    uncompress(depth_buf_ , &dlen, msg->images[1].data, msg->images[1].size);
-  } else{
-    std::cout << "multisense_utils::unpack_multisense | depth type not understood\n";
-    exit(-1);
-  }  
-  
-  unpack_multisense(depth_buf_, rgb_buf_, msg->images[0].height, msg->images[0].width, repro_matrix, 
-                                       cloud, is_rgb);
-}
-
-
 void multisense_utils::unpack_multisense(const bot_core::images_t *msg, cv::Mat_<double> repro_matrix, 
                                        pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud){
   bool is_rgb=true;
-  if (msg->images[0].pixelformat == BOT_CORE_IMAGE_T_PIXEL_FORMAT_RGB ){
+  if (msg->images[0].pixelformat == bot_core::image_t::PIXEL_FORMAT_RGB ){
     rgb_buf_ = (uint8_t*) msg->images[0].data.data();
     is_rgb = true;
-  }else if (msg->images[0].pixelformat == BOT_CORE_IMAGE_T_PIXEL_FORMAT_GRAY ){
+  }else if (msg->images[0].pixelformat == bot_core::image_t::PIXEL_FORMAT_GRAY ){
     rgb_buf_ = (uint8_t*) msg->images[0].data.data();
     is_rgb = false;
-  }else if (msg->images[0].pixelformat == BOT_CORE_IMAGE_T_PIXEL_FORMAT_MJPEG ){
+  }else if (msg->images[0].pixelformat == bot_core::image_t::PIXEL_FORMAT_MJPEG ){
     jpeg_decompress_8u_rgb ( msg->images[0].data.data(), msg->images[0].size,
         rgb_buf_, msg->images[0].width, msg->images[0].height, msg->images[0].width* 3);
     //jpegijg_decompress_8u_rgb(msg->image.image_data, msg->image.image_data_nbytes,
@@ -188,7 +153,7 @@ void multisense_utils::unpack_multisense(const bot_core::images_t *msg, cv::Mat_
   
   // TODO: support non-zipped modes (as in the renderer)
   bool is_disparity=true;
-  if (msg->image_types[1] == BOT_CORE_IMAGES_T_DISPARITY_ZIPPED ) {
+  if (msg->image_types[1] == bot_core::images_t::DISPARITY_ZIPPED ) {
     unsigned long dlen = msg->images[0].width*msg->images[0].height*2 ;//msg->depth.uncompressed_size;
     uncompress(depth_buf_ , &dlen, msg->images[1].data.data(), msg->images[1].size);
 
@@ -196,7 +161,7 @@ void multisense_utils::unpack_multisense(const bot_core::images_t *msg, cv::Mat_
 
 
     is_disparity=true;
-  }else if (msg->image_types[1] == BOT_CORE_IMAGES_T_DEPTH_MM_ZIPPED ) {
+  }else if (msg->image_types[1] == bot_core::images_t::DEPTH_MM_ZIPPED ) {
     unsigned long dlen = msg->images[0].width*msg->images[0].height*2 ;//msg->depth.uncompressed_size;
     uncompress(depth_buf_ , &dlen, msg->images[1].data.data(), msg->images[1].size);
     is_disparity=false;
