@@ -76,7 +76,7 @@ if(bot2-core-lcmtypes_FOUND)
     message(FATAL_ERROR "bot2-core-lcmtypes requires gthread-2.0 and it was not found.")
   endif()
   include_directories("${GLIB2_INCLUDE_DIR}")
-  target_link_libraries(cv-utils bot2-core-lcmtypes::lcmtypes_bot2-core
+  target_link_libraries(cv-utils bot2-core-lcmtypes::lcmtypes_bot2-core-cpp
     "${GLIB2_LIBRARY}" "${GTHREAD2_LIBRARY}")
 else()
   use_pkg(cv-utils lcmtypes_bot2-core)
